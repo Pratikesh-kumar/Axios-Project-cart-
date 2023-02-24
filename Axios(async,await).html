@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>pkkart</title>
+  </head>
+  <style>
+     
+  input{
+    font-size: 20px;
+  width: 300px;
+  
+  }
+  label{
+    font-size: larger;
+
+    font-family: cursive;
+  }
+  button{
+    color:rgb(26, 4, 4);
+    background-color: rgb(131, 106, 144);
+  }
+  select{
+    font-size: larger;
+    font-family: cursive;
+  }
+  
+  .container {
+    text-align: end;
+  margin:2rem; 
+  width: 47%;
+  border: 2px solid rgb(23, 43, 132);
+  padding: 10px;
+  text-align:left;
+  background-color:rgb(138, 124, 124),green;
+  color:white
+}
+
+
+
+  
+
+  body{
+    background:linear-gradient(to top left,rgb(176, 241, 133),rgb(96, 128, 223),rgb(117, 138, 117))  ;
+  }
+  h1 {
+  text-shadow: 2px 2px rgb(26, 29, 30);
+
+}
+  </style>
+  <body>
+   <marquee behavior="" direction="left"><h1>WELCOME to PKCART</h1></marquee> 
+    <div class="container">
+      
+    <label for="name"> PRODUCT NAME</label>
+    <input type="text" name="username" id="NAME" required />
+    <br><br>
+    <label for="price">PRICE</label>
+    <input type="number" name="price" id="pr" />
+    <br><br>
+    <button type="submit" id="btn">submit</button>
+  
+  
+
+    <ul id="user">
+      <h1>Products</h1>
+    </ul>
+    <li>-- Total Amount-- </li>
+    <ol id="amount"> </ol>
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.19.0/axios.min.js"></script>
+    <script>
+      const productname = document.getElementById("NAME");
+      const price = document.getElementById("pr");
+      const button = document.getElementById("btn");
+      
+      const amount=document.getElementById("amount")
+        var totalPrice=0;
+
+      // adding to button:::
+
+      button.onclick =async() => {
+        try{
+        let obj = {
+               product: `${productname.value}`,
+                pricing: `${price.value}`,
+                    }
+          
+        let value = await axios
+          .post("https://crudcrud.com/api/c939f95646be45e2afcd8e7a8aa19d89/pkkart",obj)
+          
+            onscreen(value.data);
+            console.log(value.data);
+          }
+          catch(err) {
+            console.log(err);
+          }
+
+
+        // productname.value = "";
+        // price.value = "";
+        // const pce = price.value;
+        // price.value = "";
+      };
+      window.addEventListener("DOMContentLoaded", async() => {
+       try{
+       let value= await axios
+          .get(
+            "https://crudcrud.com/api/c939f95646be45e2afcd8e7a8aa19d89/pkkart"
+          )
+       
+          
+            for (let i = 0; i < value.data.length; i++) {
+              onscreen(value.data[i]);
+            }
+          }
+            catch(err) {
+            console.log(err);
+            }
+          
+        
+        })
+     
+
+      function onscreen(obj) {
+
+        const parentnode = document.getElementById("user");
+        const childhtml = `<li id="${obj._id}"> ${obj.product}---->${obj.pricing}
+          <button onclick=deleteuser('${obj._id}','${obj.pricing}') >Delete</button>
+              </li>`;
+        parentnode.innerHTML += childhtml;
+               
+        
+        totalPrice+= parseInt(obj.pricing);
+        amount.innerHTML=totalPrice;
+      }
+
+
+
+     async function deleteuser(userid,pricing) {
+        // console.log(pricing)
+      try{
+       let value= axios
+          .delete(
+            `https://crudcrud.com/api/c939f95646be45e2afcd8e7a8aa19d89/pkkart/${userid}`
+          )
+         
+            removefromscreen(userid,pricing);
+      }
+      catch(err) {
+            console.log(err);
+            }
+          }
+      
+
+
+
+      function removefromscreen(userid,pricing) {
+        const parentnode = document.getElementById("user");
+        const childnode = document.getElementById(userid);
+       
+        if (childnode) {
+          parentnode.removeChild(childnode);
+          
+        }
+        totalPrice-= parseInt(pricing);
+        console.log(pricing)
+        amount.innerHTML=totalPrice;
+        
+      }
+    </script>
+  </body>
+</html>
